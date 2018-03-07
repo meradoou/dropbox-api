@@ -67,7 +67,7 @@ class Client
      *
      * @link https://www.dropbox.com/developers/documentation/http/documentation#files-copy_v2
      */
-    public function copy(string $fromPath, string $toPath): array
+    public function copy(string $fromPath, string $toPath)
     {
         $parameters = [
             'from_path' => $this->normalizePath($fromPath),
@@ -82,7 +82,7 @@ class Client
      *
      * @link https://www.dropbox.com/developers/documentation/http/documentation#files-create_folder
      */
-    public function createFolder(string $path): array
+    public function createFolder(string $path)
     {
         $parameters = [
             'path' => $this->normalizePath($path),
@@ -125,7 +125,7 @@ class Client
      *
      * @link https://www.dropbox.com/developers/documentation/http/documentation#sharing-list_shared_links
      */
-    public function listSharedLinks(string $path = null, bool $direct_only = false, string $cursor = null): array
+    public function listSharedLinks(string $path = null, bool $direct_only = false, string $cursor = null)
     {
         $parameters = [
             'path' => $path ? $this->normalizePath($path) : null,
@@ -146,7 +146,7 @@ class Client
      *
      * @link https://www.dropbox.com/developers/documentation/http/documentation#files-delete
      */
-    public function delete(string $path): array
+    public function delete(string $path)
     {
         $parameters = [
             'path' => $this->normalizePath($path),
@@ -182,7 +182,7 @@ class Client
      *
      * @link https://www.dropbox.com/developers/documentation/http/documentation#files-get_metadata
      */
-    public function getMetadata(string $path): array
+    public function getMetadata(string $path)
     {
         $parameters = [
             'path' => $this->normalizePath($path),
@@ -199,7 +199,7 @@ class Client
      *
      * @link https://www.dropbox.com/developers/documentation/http/documentation#files-get_temporary_link
      */
-    public function getTemporaryLink(string $path): string
+    public function getTemporaryLink(string $path)
     {
         $parameters = [
             'path' => $this->normalizePath($path),
@@ -220,7 +220,7 @@ class Client
      *
      * @link https://www.dropbox.com/developers/documentation/http/documentation#files-get_thumbnail
      */
-    public function getThumbnail(string $path, string $format = 'jpeg', string $size = 'w64h64'): string
+    public function getThumbnail(string $path, string $format = 'jpeg', string $size = 'w64h64')
     {
         $arguments = [
             'path' => $this->normalizePath($path),
@@ -245,7 +245,7 @@ class Client
      *
      * @link https://www.dropbox.com/developers/documentation/http/documentation#files-list_folder
      */
-    public function listFolder(string $path = '', bool $recursive = false): array
+    public function listFolder(string $path = '', bool $recursive = false)
     {
         $parameters = [
             'path' => $this->normalizePath($path),
@@ -261,7 +261,7 @@ class Client
      *
      * @link https://www.dropbox.com/developers/documentation/http/documentation#files-list_folder-continue
      */
-    public function listFolderContinue(string $cursor = ''): array
+    public function listFolderContinue(string $cursor = '')
     {
         return $this->rpcEndpointRequest('files/list_folder/continue', compact('cursor'));
     }
@@ -273,7 +273,7 @@ class Client
      *
      * @link https://www.dropbox.com/developers/documentation/http/documentation#files-move_v2
      */
-    public function move(string $fromPath, string $toPath): array
+    public function move(string $fromPath, string $toPath)
     {
         $parameters = [
             'from_path' => $this->normalizePath($fromPath),
@@ -291,7 +291,7 @@ class Client
      *
      * @return bool
      */
-    protected function shouldUploadChunked($contents): bool
+    protected function shouldUploadChunked($contents)
     {
         $size = is_string($contents) ? strlen($contents) : fstat($contents)['size'];
 
@@ -313,7 +313,7 @@ class Client
      *
      * @return bool
      */
-    protected function isPipe($contents): bool
+    protected function isPipe($contents)
     {
         return is_resource($contents) ? (fstat($contents)['mode'] & 010000) != 0 : false;
     }
@@ -331,7 +331,7 @@ class Client
      *
      * @return array
      */
-    public function upload(string $path, $contents, $mode = 'add'): array
+    public function upload(string $path, $contents, $mode = 'add')
     {
         if ($this->shouldUploadChunked($contents)) {
             return $this->uploadChunked($path, $contents, $mode);
@@ -365,7 +365,7 @@ class Client
      *
      * @return array
      */
-    public function uploadChunked(string $path, $contents, $mode = 'add', $chunkSize = null): array
+    public function uploadChunked(string $path, $contents, $mode = 'add', $chunkSize = null)
     {
         if ($chunkSize === null || $chunkSize > $this->maxChunkSize) {
             $chunkSize = $this->maxChunkSize;
@@ -390,7 +390,7 @@ class Client
      * @return \Spatie\Dropbox\UploadSessionCursor
      * @throws Exception
      */
-    protected function uploadChunk($type, &$stream, $chunkSize, $cursor = null): UploadSessionCursor
+    protected function uploadChunk($type, &$stream, $chunkSize, $cursor = null)
     {
         $maximumTries = $stream->isSeekable() ? $this->maxUploadChunkRetries : 0;
         $pos = $stream->tell();
@@ -434,7 +434,7 @@ class Client
      *
      * @return UploadSessionCursor
      */
-    public function uploadSessionStart($contents, bool $close = false): UploadSessionCursor
+    public function uploadSessionStart($contents, bool $close = false)
     {
         $arguments = compact('close');
 
@@ -459,7 +459,7 @@ class Client
      *
      * @return \Spatie\Dropbox\UploadSessionCursor
      */
-    public function uploadSessionAppend($contents, UploadSessionCursor $cursor, bool $close = false): UploadSessionCursor
+    public function uploadSessionAppend($contents, UploadSessionCursor $cursor, bool $close = false)
     {
         $arguments = compact('cursor', 'close');
 
@@ -486,7 +486,7 @@ class Client
      *
      * @return array
      */
-    public function uploadSessionFinish($contents, UploadSessionCursor $cursor, string $path, $mode = 'add', $autorename = false, $mute = false): array
+    public function uploadSessionFinish($contents, UploadSessionCursor $cursor, string $path, $mode = 'add', $autorename = false, $mute = false)
     {
         $arguments = compact('cursor');
         $arguments['commit'] = compact('path', 'mode', 'autorename', 'mute');
@@ -511,7 +511,7 @@ class Client
      *
      * @return array
      */
-    public function getAccountInfo(): array
+    public function getAccountInfo()
     {
         return $this->rpcEndpointRequest('users/get_current_account');
     }
@@ -526,7 +526,7 @@ class Client
         $this->rpcEndpointRequest('auth/token/revoke');
     }
 
-    protected function normalizePath(string $path): string
+    protected function normalizePath(string $path)
     {
         if (preg_match("/^id:.*|^rev:.*|^(ns:[0-9]+(\/.*)?)/", $path) === 1) {
             return $path;
@@ -546,7 +546,7 @@ class Client
      *
      * @throws \Exception
      */
-    public function contentEndpointRequest(string $endpoint, array $arguments, $body = ''): ResponseInterface
+    public function contentEndpointRequest(string $endpoint, array $arguments, $body = '')
     {
         $headers = ['Dropbox-API-Arg' => json_encode($arguments)];
 
@@ -566,7 +566,7 @@ class Client
         return $response;
     }
 
-    public function rpcEndpointRequest(string $endpoint, array $parameters = null): array
+    public function rpcEndpointRequest(string $endpoint, array $parameters = null)
     {
         try {
             $options = [];
@@ -585,7 +585,7 @@ class Client
         return $response ?? [];
     }
 
-    protected function determineException(ClientException $exception): Exception
+    protected function determineException(ClientException $exception)
     {
         if (in_array($exception->getResponse()->getStatusCode(), [400, 409])) {
             return new BadRequest($exception->getResponse());
